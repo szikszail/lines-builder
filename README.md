@@ -1,6 +1,6 @@
 # lines-builder
 
-![Downloads](https://img.shields.io/npm/dw/lines-builder?style=flat-square) ![Version@npm](https://img.shields.io/npm/v/lines-builder?label=version%40npm&style=flat-square) ![Version@git](https://img.shields.io/github/package-json/v/szikszail/lines-builder/master?label=version%40git&style=flat-square) ![CI](https://img.shields.io/github/workflow/status/szikszail/lines-builder/CI/main?label=ci&style=flat-square) ![Docs](https://img.shields.io/github/workflow/status/szikszail/lines-builder/Docs/main?label=docs&style=flat-square)
+![Downloads](https://img.shields.io/npm/dw/lines-builder?style=flat-square) ![Version@npm](https://img.shields.io/npm/v/lines-builder?label=version%40npm&style=flat-square) ![Version@git](https://img.shields.io/github/package-json/v/szikszail/lines-builder/main?label=version%40git&style=flat-square) ![CI](https://img.shields.io/github/workflow/status/szikszail/lines-builder/CI/main?label=ci&style=flat-square) ![Docs](https://img.shields.io/github/workflow/status/szikszail/lines-builder/Docs/main?label=docs&style=flat-square)
 
 Tool and model to handle string lines and indentation.
 
