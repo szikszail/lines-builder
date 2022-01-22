@@ -79,6 +79,7 @@ export class LinesBuilder {
     log("parseLines(ls: %o)", ls);
     const parsedLines: LineLike[] = [];
     for (const line of ls) {
+      log("parseLines.line: %o", line)
       if (typeof line === "string") {
         let splitedLines: string[] = splitToLines(line);
         if (this.options.trim) {
@@ -88,6 +89,7 @@ export class LinesBuilder {
       } else if (line instanceof LinesBuilder || line === null) {
         parsedLines.push(line);
       }
+      log("parseLines.parsedLines: %o", parsedLines);
     }
     return parsedLines;
   }

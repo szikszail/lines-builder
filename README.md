@@ -114,7 +114,7 @@ If you need to set explicitly what EOL to use, pass it in any options:
 ```typescript
 // IBM Mainframe EOL
 const l = lines({ eol: "\025" }, "Hello", "World");
-console.log(parent);
+console.log(l);
 // Hello\025World
 ```
 
