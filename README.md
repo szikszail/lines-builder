@@ -85,6 +85,39 @@ console.log(parent);
 // --2nd parent
 ```
 
+### Default options
+
+As seen above, options can be set per each lines-builder, but if you want to use one set of options,
+per each lines-builder you will use, you can use the `setDefaultOptions`.
+
+```typescript
+import { lines, setDefaultOptions } from "lines-builder";
+
+setDefaultOptions({ indent: "__" });
+
+const nested = lines("1st nested", "2nd nested");
+const parent = lines("1st parent", nested, "2nd parent");
+console.log(parent);
+// __1st parent
+// ____1st nested
+// ____2nd nested
+// __2nd parent
+```
+
+Note, that the default options can be reset to the [initial ones](src/index.ts#L20) with the `resetDefaultOptions`.
+
+### EOL
+
+To output/format the lines the lines-builder will determine the appropriate EOL based on the platform used (`\r\n` for Windows, `\n` for other OS).
+If you need to set explicitly what EOL to use, pass it in any options:
+
+```typescript
+// IBM Mainframe EOL
+const l = lines({ eol: "\025" }, "Hello", "World");
+console.log(parent);
+// Hello\025World
+```
+
 ## Other
 
 For detailed documentation see the [TypeDocs documentation](https://szikszail.github.io/lines-builder/).

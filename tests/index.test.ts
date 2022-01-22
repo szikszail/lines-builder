@@ -1,4 +1,4 @@
-import { lines, splitToLines, LineLike, LinesBuilder, LinesBuilderOptions } from "../src";
+import { lines, splitToLines, LineLike, LinesBuilder, LinesBuilderOptions, setDefaultOptions, resetDefaultOptions } from "../src";
 import * as os from "os";
 
 jest.mock("os");
@@ -6,6 +6,7 @@ jest.mock("os");
 describe("LinesBuilder", () => {
   beforeEach(() => {
     (os.platform as unknown as jest.Mock).mockReturnValue("win32");
+    resetDefaultOptions();
   });
 
   function testLines(l: LinesBuilder, expected: string[]) {
@@ -86,7 +87,7 @@ describe("LinesBuilder", () => {
     });
   });
 
-  describe("OS", () => {
+  describe("EOL", () => {
     test("should handle Windows EOL", () => {
       (os.platform as unknown as jest.Mock).mockReturnValue("win32");
       const l = lines("A", "B");
@@ -96,6 +97,23 @@ describe("LinesBuilder", () => {
       (os.platform as unknown as jest.Mock).mockReturnValue("unix");
       const l = lines("A", "B");
       expect(l.toString()).toHaveLength(3);
+    });
+    test("should use explicit EOL", () => {
+      const l = lines({ eol: "EOL" }, "A", "B");
+      expect(l.toString()).toEqual("AEOLB");
+    });
+  });
+
+  describe("default options", () => {
+    test("should handle invalid default options", () => {
+      expect(() => setDefaultOptions(null)).toThrow(TypeError);
+    });
+
+    test("should handle default options", () => {
+      setDefaultOptions({ indent: "__" });
+      const nested = lines("1st nested", "2nd nested");
+      const parent = lines("1st parent", nested, "2nd parent");
+      testLines(parent, ["__1st parent", "____1st nested", "____2nd nested", "__2nd parent"]);
     });
   });
 });

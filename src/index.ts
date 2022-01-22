@@ -9,6 +9,7 @@ export interface LinesBuilderOptions {
   indent?: string | number;
   indentEmpty?: boolean;
   trim?: boolean;
+  eol?: string | null;
 }
 
 
@@ -16,8 +17,17 @@ export function splitToLines(s: string): string[] {
   return s.split(/\r?\n\r?/g);
 }
 
+const DEFAULT_OPTIONS: LinesBuilderOptions = {
+  indent: null,
+  trim: true,
+  indentEmpty: false,
+  eol: null,
+};
 
 export class LinesBuilder {
+  private static DEFAULT_OPTIONS: LinesBuilderOptions = {
+    ...DEFAULT_OPTIONS,
+  };
   private options: LinesBuilderOptions;
   private lines: LineLike[] = [];
 
@@ -30,9 +40,7 @@ export class LinesBuilder {
       options = args.shift();
     }
     this.options = {
-      indent: null,
-      trim: true,
-      indentEmpty: false,
+      ...LinesBuilder.DEFAULT_OPTIONS,
       ...(options || {}),
     };
 
@@ -44,6 +52,27 @@ export class LinesBuilder {
 
     this.lines = this.parseLines(args as LineLike[]);
     log("LinesBuilder.lines: %o", this.lines);
+  }
+
+  public static resetDefaultOptions(): LinesBuilderOptions {
+    log("resetDefaultOptions.prev: %o", LinesBuilder.DEFAULT_OPTIONS);
+    LinesBuilder.DEFAULT_OPTIONS = { ...DEFAULT_OPTIONS };
+    log("resetDefaultOptions.new: %o", LinesBuilder.DEFAULT_OPTIONS);
+    return LinesBuilder.DEFAULT_OPTIONS;
+  }
+
+  public static setDefaultOptions(options: Partial<LinesBuilderOptions>): LinesBuilderOptions {
+    log("setDefaultOptions(options: %o)", options);
+    if (typeof options !== "object" || !options) {
+      throw new TypeError("Options must be a LinesBuilderOptions!");
+    }
+    log("setDefaultOptions.prev: %o", LinesBuilder.DEFAULT_OPTIONS);
+    LinesBuilder.DEFAULT_OPTIONS = {
+      ...LinesBuilder.DEFAULT_OPTIONS,
+      ...options,
+    };
+    log("setDefaultOptions.next: %o", LinesBuilder.DEFAULT_OPTIONS);
+    return LinesBuilder.DEFAULT_OPTIONS;
   }
 
   private parseLines(ls: LineLike[]): LineLike[] {
@@ -82,8 +111,14 @@ export class LinesBuilder {
       log("toString.ls: %o", ls);
     }
 
-    log("toString.platform: %s", os.platform());
-    return ls.join(os.platform() == "win32" ? "\r\n" : "\n");
+    let eol: string = this.options.eol;
+    if (!eol) {
+      log("toString.platform: %s", os.platform());
+      eol = os.platform() == "win32" ? "\r\n" : "\n";
+    }
+    log("toString.eol: %o", eol);
+
+    return ls.join(eol);
   }
 
   public append(...ls: LineLike[]): LinesBuilder {
@@ -108,6 +143,9 @@ export class LinesBuilder {
     return this;
   }
 }
+
+export const setDefaultOptions = LinesBuilder.setDefaultOptions;
+export const resetDefaultOptions = LinesBuilder.resetDefaultOptions;
 
 export function lines(...ls: LineLike[]): LinesBuilder;
 export function lines(options: Partial<LinesBuilderOptions>, ...ls: LineLike[]): LinesBuilder;
