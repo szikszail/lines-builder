@@ -72,7 +72,7 @@ describe("LinesBuilder", () => {
 
     test("should not indent empty lines by default", testLinesWithOptions(["--1st", "", "--2nd"], { indent: "--" }, "1st", null, "2nd"));
 
-    test("should indent empty lines if set", testLinesWithOptions(["--1st", "--", "--2nd"], { indent: "--", indentEmpty: true }, "1st", null, "2nd"));
+    test("should indent empty lines if set", testLinesWithOptions(["--1st", "--", "--2nd", "--3rd", "--", "--4th"], { indent: "--", indentEmpty: true }, "1st", null, "2nd", "3rd\n\n4th"));
   });
 
   describe("nested", () => {
@@ -92,6 +92,18 @@ describe("LinesBuilder", () => {
       const nested = lines("1st nested", "2nd nested");
       const parent = lines({ indent: "--", skipFirstLevelIndent: true }, "1st parent", nested, "2nd parent");
       testLines(parent, ["1st parent", "--1st nested", "--2nd nested", "2nd parent"]);
+    });
+
+    test("should handle nested empty lines", () => {
+      const nested = lines("1st nested", null, "2nd nested");
+      const parent = lines({ indent: "--", indentEmpty: false }, "1st parent", nested, "2nd parent");
+      testLines(parent, ["--1st parent", "--1st nested", "", "--2nd nested", "--2nd parent"]);
+    });
+
+    test("should skip nested empty lines if set", () => {
+      const nested = lines("1st nested", null, "2nd nested");
+      const parent = lines({ indent: "--", skipEmpty: true }, "1st parent", nested, "2nd parent");
+      testLines(parent, ["--1st parent", "--1st nested", "--2nd nested", "--2nd parent"]);
     });
   });
 

@@ -6,7 +6,7 @@ const log = debug("lines-builder");
 export type LineLike = string | LinesBuilder | null;
 
 export interface LinesBuilderOptions {
-  indent?: string | number;
+  indent?: string | number | null;
   indentEmpty?: boolean;
   skipFirstLevelIndent?: boolean;
   skipEmpty?: boolean;
@@ -116,12 +116,13 @@ export class LinesBuilder {
         ls.push(`${firstIndent}${line}`);
       } else if (line instanceof LinesBuilder) {
         const nestedLines = splitToLines(line.toString());
-        ls.push(...nestedLines.map(l => {
+        for (const l of nestedLines) {
           if (l) {
-            return `${indent}${l}`;
+            ls.push(`${indent}${l}`);
+          } else if (!this.options.skipEmpty) {
+            ls.push(this.options.indentEmpty ? indent : "");
           }
-          return this.options.indentEmpty ? indent : "";
-        }));
+        }
       } else if (!this.options.skipEmpty) {
         ls.push(this.options.indentEmpty ? indent : "");
       }
