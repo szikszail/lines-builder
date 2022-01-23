@@ -11,18 +11,75 @@
 <p>To create a <strong>new lines-builder</strong> object:</p>
 <pre><code class="language-typescript"><span class="hl-0">import</span><span class="hl-1"> { </span><span class="hl-2">lines</span><span class="hl-1"> } </span><span class="hl-0">from</span><span class="hl-1"> </span><span class="hl-3">&quot;lines-builder&quot;</span><span class="hl-1">;</span><br/><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">l</span><span class="hl-1"> = </span><span class="hl-6">lines</span><span class="hl-1">(</span><span class="hl-3">&quot;Hello World</span><span class="hl-7">\n</span><span class="hl-3">This is the 2nd line&quot;</span><span class="hl-1">);</span><br/><span class="hl-2">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-2">l</span><span class="hl-1">);</span><br/><span class="hl-8">// Hello World</span><br/><span class="hl-8">// This is the 2nd line</span>
 </code></pre>
+<p><code>lines</code> accepts an optional <code>options</code> object and any additional string (or lines-builder) as lines.</p>
+
+<a href="#options" id="options" style="color: inherit; text-decoration: none;">
+  <h3>Options</h3>
+</a>
+<table>
+<thead>
+<tr>
+<th align="left">Option</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+<th align="left">Default</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>indent</code></td>
+<td align="left">`string</td>
+<td align="left">number`</td>
+<td align="left">The indentation to use to indent the lines (exact string or the number of spaces).</td>
+</tr>
+<tr>
+<td align="left"><code>indentEmpty</code></td>
+<td align="left"><code>boolean</code></td>
+<td align="left">Whether the empty lines should still be indented.</td>
+<td align="left"><code>false</code></td>
+</tr>
+<tr>
+<td align="left"><code>skipFirstLevelIndent</code></td>
+<td align="left"><code>boolean</code></td>
+<td align="left">Whether only the nested lines-builders should be indented.</td>
+<td align="left"><code>false</code></td>
+</tr>
+<tr>
+<td align="left"><code>skipEmpty</code></td>
+<td align="left"><code>boolean</code></td>
+<td align="left">Whether empty lines should be added to the output string.</td>
+<td align="left"><code>false</code></td>
+</tr>
+<tr>
+<td align="left"><code>trimLeft</code></td>
+<td align="left"><code>boolean</code></td>
+<td align="left">Can trailing white spaces be trimmed from the parsed lines.</td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>trimRight</code></td>
+<td align="left"><code>boolean</code></td>
+<td align="left">Can leading white spaces be trimmed from the parsed lines.</td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>eol</code></td>
+<td align="left"><code>string</code></td>
+<td align="left">The line-break to be used. If not set, it is determined based on the platform.</td>
+<td align="left"><code>null</code></td>
+</tr>
+</tbody></table>
 
 <a href="#append" id="append" style="color: inherit; text-decoration: none;">
   <h3>Append</h3>
 </a>
-<p>You can <strong>append any lines</strong>, including new line to the end (in place):</p>
+<p>You can <strong>append any lines</strong>, including new line to the end (in place), passing any string (or lines-builder) as arguments to <code>append</code> :</p>
 <pre><code class="language-typescript"><span class="hl-2">l</span><span class="hl-1">.</span><span class="hl-6">append</span><span class="hl-1">(</span><span class="hl-3">&quot;3rd line&quot;</span><span class="hl-1">, </span><span class="hl-4">null</span><span class="hl-1">, </span><span class="hl-3">&quot;4th line</span><span class="hl-7">\n</span><span class="hl-3">and 5th line&quot;</span><span class="hl-1">);</span><br/><span class="hl-2">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-2">l</span><span class="hl-1">);</span><br/><span class="hl-8">// Hello World</span><br/><span class="hl-8">// This is the 2nd line</span><br/><span class="hl-8">// 3rd line</span><br/><span class="hl-8">// </span><br/><span class="hl-8">// 4th line</span><br/><span class="hl-8">// 5th line</span>
 </code></pre>
 
 <a href="#prepend" id="prepend" style="color: inherit; text-decoration: none;">
   <h3>Prepend</h3>
 </a>
-<p>You can <strong>prepend any lines</strong>, including new-line to the beginning (in place):</p>
+<p>You can <strong>prepend any lines</strong>, including new-line to the beginning (in place), passing any string (or lines-builder) as arguments to <code>prepend</code> :</p>
 <pre><code class="language-typescript"><span class="hl-2">l</span><span class="hl-1">.</span><span class="hl-6">prepend</span><span class="hl-1">(</span><span class="hl-3">&quot;This is the title&quot;</span><span class="hl-1">, </span><span class="hl-4">null</span><span class="hl-1">, </span><span class="hl-3">&quot;And the 0th line&quot;</span><span class="hl-1">);</span><br/><span class="hl-2">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-2">l</span><span class="hl-1">);</span><br/><span class="hl-8">// This is the title</span><br/><span class="hl-8">// </span><br/><span class="hl-8">// And the 0th line</span><br/><span class="hl-8">// Hello World</span><br/><span class="hl-8">// This is the 2nd line</span><br/><span class="hl-8">// 3rd line</span><br/><span class="hl-8">// </span><br/><span class="hl-8">// 4th line</span><br/><span class="hl-8">// 5th line</span>
 </code></pre>
 
@@ -33,13 +90,13 @@
 <pre><code class="language-typescript"><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">l</span><span class="hl-1"> = </span><span class="hl-6">lines</span><span class="hl-1">({ </span><span class="hl-2">indent:</span><span class="hl-1"> </span><span class="hl-3">&#39;--&#39;</span><span class="hl-1"> }, </span><span class="hl-3">&quot;Hello World&quot;</span><span class="hl-1">, </span><span class="hl-3">&quot;2nd line&quot;</span><span class="hl-1">);</span><br/><span class="hl-2">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-2">l</span><span class="hl-1">);</span><br/><span class="hl-8">// --Hello World</span><br/><span class="hl-8">// --2nd line</span>
 </code></pre>
 <p>By default, <strong>no indentation</strong> is set.</p>
-<p>You can also set a <strong>number</strong> as the indentation, in this case, the given number of spaces will be used.</p>
+<p>You can also set a <strong>number</strong> as the indentation. In this case, the given number of spaces will be used.</p>
 
 <a href="#trim" id="trim" style="color: inherit; text-decoration: none;">
   <h3>Trim</h3>
 </a>
 <p>By default, lines-builder <strong>trims</strong> the leading and trailing <strong>whitespaces</strong>, but you can turn it off:</p>
-<pre><code class="language-typescript"><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">l</span><span class="hl-1"> = </span><span class="hl-6">lines</span><span class="hl-1">({ </span><span class="hl-2">trim:</span><span class="hl-1"> </span><span class="hl-4">false</span><span class="hl-1"> }, </span><span class="hl-3">&quot;Hello World  &quot;</span><span class="hl-1">, </span><span class="hl-3">&quot;  2nd line</span><span class="hl-7">\n</span><span class="hl-3">  3rd line&quot;</span><span class="hl-1">);</span><br/><span class="hl-2">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-2">l</span><span class="hl-1">);</span><br/><span class="hl-8">// Hello World</span><br/><span class="hl-8">//   2nd line</span><br/><span class="hl-8">//   3rd line</span>
+<pre><code class="language-typescript"><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">l</span><span class="hl-1"> = </span><span class="hl-6">lines</span><span class="hl-1">({ </span><span class="hl-2">trimLeft:</span><span class="hl-1"> </span><span class="hl-4">false</span><span class="hl-1">, </span><span class="hl-2">trimRight:</span><span class="hl-1"> </span><span class="hl-4">false</span><span class="hl-1"> }, </span><span class="hl-3">&quot;Hello World  &quot;</span><span class="hl-1">, </span><span class="hl-3">&quot;  2nd line</span><span class="hl-7">\n</span><span class="hl-3">  3rd line&quot;</span><span class="hl-1">);</span><br/><span class="hl-2">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-2">l</span><span class="hl-1">);</span><br/><span class="hl-8">// Hello World</span><br/><span class="hl-8">//   2nd line</span><br/><span class="hl-8">//   3rd line</span>
 </code></pre>
 
 <a href="#nesting" id="nesting" style="color: inherit; text-decoration: none;">
@@ -48,20 +105,24 @@
 <p>Lines-builder accepts another lines-builder instance instead of any string lines, to be able to nest it:</p>
 <pre><code class="language-typescript"><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">nested</span><span class="hl-1"> = </span><span class="hl-6">lines</span><span class="hl-1">({ </span><span class="hl-2">indent:</span><span class="hl-1"> </span><span class="hl-3">&#39;==&#39;</span><span class="hl-1"> }, </span><span class="hl-3">&quot;1st nested&quot;</span><span class="hl-1">, </span><span class="hl-3">&quot;2nd nested&quot;</span><span class="hl-1">);</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">parent</span><span class="hl-1"> = </span><span class="hl-6">lines</span><span class="hl-1">({ </span><span class="hl-2">indent:</span><span class="hl-1"> </span><span class="hl-3">&#39;--&#39;</span><span class="hl-1"> }, </span><span class="hl-3">&quot;1st parent&quot;</span><span class="hl-1">, </span><span class="hl-2">nested</span><span class="hl-1">, </span><span class="hl-3">&quot;2nd parent&quot;</span><span class="hl-1">);</span><br/><span class="hl-2">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-2">parent</span><span class="hl-1">);</span><br/><span class="hl-8">// --1st parent</span><br/><span class="hl-8">// --==1st nested</span><br/><span class="hl-8">// --==2nd nested</span><br/><span class="hl-8">// --2nd parent</span>
 </code></pre>
+<p>By setting the <code>skipFirstLevelIndent</code> option, the lines-builder won&#39;t indent the direct lines of the lines-builder, 
+only starting from the nested ones:</p>
+<pre><code class="language-typescript"><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">nested</span><span class="hl-1"> = </span><span class="hl-6">lines</span><span class="hl-1">(, </span><span class="hl-3">&quot;1st nested&quot;</span><span class="hl-1">, </span><span class="hl-3">&quot;2nd nested&quot;</span><span class="hl-1">);</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">parent</span><span class="hl-1"> = </span><span class="hl-6">lines</span><span class="hl-1">({ </span><span class="hl-2">skipFirstLevelIndent:</span><span class="hl-1"> </span><span class="hl-4">true</span><span class="hl-1">, </span><span class="hl-2">indent:</span><span class="hl-1"> </span><span class="hl-3">&#39;--&#39;</span><span class="hl-1"> }, </span><span class="hl-3">&quot;1st parent&quot;</span><span class="hl-1">, </span><span class="hl-2">nested</span><span class="hl-1">, </span><span class="hl-3">&quot;2nd parent&quot;</span><span class="hl-1">);</span><br/><span class="hl-2">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-2">parent</span><span class="hl-1">);</span><br/><span class="hl-8">// 1st parent</span><br/><span class="hl-8">// --1st nested</span><br/><span class="hl-8">// --2nd nested</span><br/><span class="hl-8">// 2nd parent</span>
+</code></pre>
 
 <a href="#default-options" id="default-options" style="color: inherit; text-decoration: none;">
   <h3>Default options</h3>
 </a>
-<p>As seen above, options can be set per each lines-builder, but if you want to use one set of options,
+<p>As seen above, options can be set per each lines-builder, but if you want to use one set of options, 
 per each lines-builder you will use, you can use the <code>setDefaultOptions</code>.</p>
 <pre><code class="language-typescript"><span class="hl-0">import</span><span class="hl-1"> { </span><span class="hl-2">lines</span><span class="hl-1">, </span><span class="hl-2">setDefaultOptions</span><span class="hl-1"> } </span><span class="hl-0">from</span><span class="hl-1"> </span><span class="hl-3">&quot;lines-builder&quot;</span><span class="hl-1">;</span><br/><br/><span class="hl-6">setDefaultOptions</span><span class="hl-1">({ </span><span class="hl-2">indent:</span><span class="hl-1"> </span><span class="hl-3">&quot;__&quot;</span><span class="hl-1"> });</span><br/><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">nested</span><span class="hl-1"> = </span><span class="hl-6">lines</span><span class="hl-1">(</span><span class="hl-3">&quot;1st nested&quot;</span><span class="hl-1">, </span><span class="hl-3">&quot;2nd nested&quot;</span><span class="hl-1">);</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">parent</span><span class="hl-1"> = </span><span class="hl-6">lines</span><span class="hl-1">(</span><span class="hl-3">&quot;1st parent&quot;</span><span class="hl-1">, </span><span class="hl-2">nested</span><span class="hl-1">, </span><span class="hl-3">&quot;2nd parent&quot;</span><span class="hl-1">);</span><br/><span class="hl-2">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-2">parent</span><span class="hl-1">);</span><br/><span class="hl-8">// __1st parent</span><br/><span class="hl-8">// ____1st nested</span><br/><span class="hl-8">// ____2nd nested</span><br/><span class="hl-8">// __2nd parent</span>
 </code></pre>
-<p>Note, that the default options can be reset to the <a href="src/index.ts#L20">initial ones</a> with the <code>resetDefaultOptions</code>.</p>
+<p>Note that the default options can be reset to the <a href="src/index.ts#L20">initial ones</a> with the <code>resetDefaultOptions</code>.</p>
 
 <a href="#eol" id="eol" style="color: inherit; text-decoration: none;">
   <h3>EOL</h3>
 </a>
-<p>To output/format the lines the lines-builder will determine the appropriate EOL based on the platform used (<code>\r\n</code> for Windows, <code>\n</code> for other OS).
+<p>To output/format the lines, the lines-builder will determine the appropriate EOL based on the platform used ( <code>\r\n</code> for Windows, <code>\n</code> for other OS).
 If you need to set explicitly what EOL to use, pass it in any options:</p>
 <pre><code class="language-typescript"><span class="hl-8">// IBM Mainframe EOL</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">l</span><span class="hl-1"> = </span><span class="hl-6">lines</span><span class="hl-1">({ </span><span class="hl-2">eol:</span><span class="hl-1"> </span><span class="hl-3">&quot;</span><span class="hl-7">\025</span><span class="hl-3">&quot;</span><span class="hl-1"> }, </span><span class="hl-3">&quot;Hello&quot;</span><span class="hl-1">, </span><span class="hl-3">&quot;World&quot;</span><span class="hl-1">);</span><br/><span class="hl-2">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-2">l</span><span class="hl-1">);</span><br/><span class="hl-8">// Hello\025World</span>
 </code></pre>
