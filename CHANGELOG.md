@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.2.0 - 2021-01-23
+
+### Added
+
+- Added `skipFirstLevelIndent` option
+- Added `skipEmpty` option
+
+### Changed
+
+- Changed `trim` option to `trimLeft` and `trimRight`
+
 ## 1.1.1 - 2021-01-22
 
 ### Fixed

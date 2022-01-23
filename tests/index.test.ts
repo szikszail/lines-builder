@@ -33,11 +33,13 @@ describe("LinesBuilder", () => {
 
     test("should trim lines by default", testLinesWithoutOptions(["Hello", "World"], " Hello \n World\t"));
 
-    test("should not trim lines if ommited", testLinesWithOptions([" Hello ", " World\t"], { trim: false }, " Hello \n World\t"));
+    test("should not trim lines if ommited", testLinesWithOptions([" Hello ", " World\t"], { trimLeft: false, trimRight: false }, " Hello \n World\t"));
 
     test("should handle multiple parameters", testLinesWithoutOptions(["Hello", "World", "Again"], "Hello\nWorld", "Again"));
 
     test("should handle empty line", testLinesWithoutOptions(["Hello", "", "World"], "Hello", null, "World"));
+
+    test("should skip empty line", testLinesWithOptions(["Hello", "World"], { skipEmpty: true }, "Hello", null, "World"));
 
     test("should handle empty arguments", testLinesWithoutOptions([""]));
 
@@ -70,7 +72,7 @@ describe("LinesBuilder", () => {
 
     test("should not indent empty lines by default", testLinesWithOptions(["--1st", "", "--2nd"], { indent: "--" }, "1st", null, "2nd"));
 
-    test("should indent empty lines if set", testLinesWithOptions(["--1st", "--", "--2nd"], { indent: "--", indentEmpty: true }, "1st", null, "2nd"));
+    test("should indent empty lines if set", testLinesWithOptions(["--1st", "--", "--2nd", "--3rd", "--", "--4th"], { indent: "--", indentEmpty: true }, "1st", null, "2nd", "3rd\n\n4th"));
   });
 
   describe("nested", () => {
@@ -84,6 +86,24 @@ describe("LinesBuilder", () => {
       const nested = lines({ indent: "==" }, "1st nested", "2nd nested");
       const parent = lines({ indent: "--" }, "1st parent", nested, "2nd parent");
       testLines(parent, ["--1st parent", "--==1st nested", "--==2nd nested", "--2nd parent"]);
+    });
+
+    test("should skip first level indent", () => {
+      const nested = lines("1st nested", "2nd nested");
+      const parent = lines({ indent: "--", skipFirstLevelIndent: true }, "1st parent", nested, "2nd parent");
+      testLines(parent, ["1st parent", "--1st nested", "--2nd nested", "2nd parent"]);
+    });
+
+    test("should handle nested empty lines", () => {
+      const nested = lines("1st nested", null, "2nd nested");
+      const parent = lines({ indent: "--", indentEmpty: false }, "1st parent", nested, "2nd parent");
+      testLines(parent, ["--1st parent", "--1st nested", "", "--2nd nested", "--2nd parent"]);
+    });
+
+    test("should skip nested empty lines if set", () => {
+      const nested = lines("1st nested", null, "2nd nested");
+      const parent = lines({ indent: "--", skipEmpty: true }, "1st parent", nested, "2nd parent");
+      testLines(parent, ["--1st parent", "--1st nested", "--2nd nested", "--2nd parent"]);
     });
   });
 

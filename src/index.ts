@@ -6,9 +6,12 @@ const log = debug("lines-builder");
 export type LineLike = string | LinesBuilder | null;
 
 export interface LinesBuilderOptions {
-  indent?: string | number;
+  indent?: string | number | null;
   indentEmpty?: boolean;
-  trim?: boolean;
+  skipFirstLevelIndent?: boolean;
+  skipEmpty?: boolean;
+  trimLeft?: boolean;
+  trimRight?: boolean;
   eol?: string | null;
 }
 
@@ -19,8 +22,11 @@ export function splitToLines(s: string): string[] {
 
 const DEFAULT_OPTIONS: LinesBuilderOptions = {
   indent: null,
-  trim: true,
+  trimLeft: true,
+  trimRight: true,
   indentEmpty: false,
+  skipFirstLevelIndent: false,
+  skipEmpty: false,
   eol: null,
 };
 
@@ -82,8 +88,11 @@ export class LinesBuilder {
       log("parseLines.line: %o", line)
       if (typeof line === "string") {
         let splitedLines: string[] = splitToLines(line);
-        if (this.options.trim) {
-          splitedLines = splitedLines.map(l => l.trim());
+        if (this.options.trimLeft) {
+          splitedLines = splitedLines.map(l => l.trimLeft());
+        }
+        if (this.options.trimRight) {
+          splitedLines = splitedLines.map(l => l.trimRight());
         }
         parsedLines.push(...splitedLines);
       } else if (line instanceof LinesBuilder || line === null) {
@@ -98,16 +107,23 @@ export class LinesBuilder {
     log("toString:lines: %o", this.lines);
     const ls: string[] = [];
     const indent: string = this.options.indent as string ?? "";
+    const firstIndent: string = this.options.skipFirstLevelIndent ? "" : indent;
     log("toString.indent: %o", indent);
 
     for (const line of this.lines) {
       log("toString.line: %o", line);
       if (typeof line === "string") {
-        ls.push(`${indent}${line}`);
+        ls.push(`${firstIndent}${line}`);
       } else if (line instanceof LinesBuilder) {
         const nestedLines = splitToLines(line.toString());
-        ls.push(...nestedLines.map(l => `${indent}${l}`));
-      } else {
+        for (const l of nestedLines) {
+          if (l) {
+            ls.push(`${indent}${l}`);
+          } else if (!this.options.skipEmpty) {
+            ls.push(this.options.indentEmpty ? indent : "");
+          }
+        }
+      } else if (!this.options.skipEmpty) {
         ls.push(this.options.indentEmpty ? indent : "");
       }
       log("toString.ls: %o", ls);
