@@ -8,6 +8,8 @@ export type LineLike = string | LinesBuilder | null;
 export interface LinesBuilderOptions {
   indent?: string | number;
   indentEmpty?: boolean;
+  skipFirstLevelIndent?: boolean;
+  skipEmpty?: boolean;
   trim?: boolean;
   eol?: string | null;
 }
@@ -21,6 +23,8 @@ const DEFAULT_OPTIONS: LinesBuilderOptions = {
   indent: null,
   trim: true,
   indentEmpty: false,
+  skipFirstLevelIndent: false,
+  skipEmpty: false,
   eol: null,
 };
 
@@ -98,16 +102,17 @@ export class LinesBuilder {
     log("toString:lines: %o", this.lines);
     const ls: string[] = [];
     const indent: string = this.options.indent as string ?? "";
+    const firstIndent: string = this.options.skipFirstLevelIndent ? "" : indent;
     log("toString.indent: %o", indent);
 
     for (const line of this.lines) {
       log("toString.line: %o", line);
       if (typeof line === "string") {
-        ls.push(`${indent}${line}`);
+        ls.push(`${firstIndent}${line}`);
       } else if (line instanceof LinesBuilder) {
         const nestedLines = splitToLines(line.toString());
         ls.push(...nestedLines.map(l => `${indent}${l}`));
-      } else {
+      } else if (!this.options.skipEmpty) {
         ls.push(this.options.indentEmpty ? indent : "");
       }
       log("toString.ls: %o", ls);

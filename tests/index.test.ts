@@ -39,6 +39,8 @@ describe("LinesBuilder", () => {
 
     test("should handle empty line", testLinesWithoutOptions(["Hello", "", "World"], "Hello", null, "World"));
 
+    test("should skip empty line", testLinesWithOptions(["Hello", "World"], { skipEmpty: true }, "Hello", null, "World"));
+
     test("should handle empty arguments", testLinesWithoutOptions([""]));
 
     // @ts-ignore
@@ -84,6 +86,12 @@ describe("LinesBuilder", () => {
       const nested = lines({ indent: "==" }, "1st nested", "2nd nested");
       const parent = lines({ indent: "--" }, "1st parent", nested, "2nd parent");
       testLines(parent, ["--1st parent", "--==1st nested", "--==2nd nested", "--2nd parent"]);
+    });
+
+    test("should skip first level indent", () => {
+      const nested = lines("1st nested", "2nd nested");
+      const parent = lines({ indent: "--", skipFirstLevelIndent: true }, "1st parent", nested, "2nd parent");
+      testLines(parent, ["1st parent", "--1st nested", "--2nd nested", "2nd parent"]);
     });
   });
 
