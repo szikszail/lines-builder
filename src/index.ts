@@ -10,7 +10,8 @@ export interface LinesBuilderOptions {
   indentEmpty?: boolean;
   skipFirstLevelIndent?: boolean;
   skipEmpty?: boolean;
-  trim?: boolean;
+  trimLeft?: boolean;
+  trimRight?: boolean;
   eol?: string | null;
 }
 
@@ -21,7 +22,8 @@ export function splitToLines(s: string): string[] {
 
 const DEFAULT_OPTIONS: LinesBuilderOptions = {
   indent: null,
-  trim: true,
+  trimLeft: true,
+  trimRight: true,
   indentEmpty: false,
   skipFirstLevelIndent: false,
   skipEmpty: false,
@@ -86,8 +88,11 @@ export class LinesBuilder {
       log("parseLines.line: %o", line)
       if (typeof line === "string") {
         let splitedLines: string[] = splitToLines(line);
-        if (this.options.trim) {
-          splitedLines = splitedLines.map(l => l.trim());
+        if (this.options.trimLeft) {
+          splitedLines = splitedLines.map(l => l.trimLeft());
+        }
+        if (this.options.trimRight) {
+          splitedLines = splitedLines.map(l => l.trimRight());
         }
         parsedLines.push(...splitedLines);
       } else if (line instanceof LinesBuilder || line === null) {

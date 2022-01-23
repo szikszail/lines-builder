@@ -33,7 +33,7 @@ describe("LinesBuilder", () => {
 
     test("should trim lines by default", testLinesWithoutOptions(["Hello", "World"], " Hello \n World\t"));
 
-    test("should not trim lines if ommited", testLinesWithOptions([" Hello ", " World\t"], { trim: false }, " Hello \n World\t"));
+    test("should not trim lines if ommited", testLinesWithOptions([" Hello ", " World\t"], { trimLeft: false, trimRight: false }, " Hello \n World\t"));
 
     test("should handle multiple parameters", testLinesWithoutOptions(["Hello", "World", "Again"], "Hello\nWorld", "Again"));
 
