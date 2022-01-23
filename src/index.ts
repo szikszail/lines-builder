@@ -111,7 +111,12 @@ export class LinesBuilder {
         ls.push(`${firstIndent}${line}`);
       } else if (line instanceof LinesBuilder) {
         const nestedLines = splitToLines(line.toString());
-        ls.push(...nestedLines.map(l => `${indent}${l}`));
+        ls.push(...nestedLines.map(l => {
+          if (l) {
+            return `${indent}${l}`;
+          }
+          return this.options.indentEmpty ? indent : "";
+        }));
       } else if (!this.options.skipEmpty) {
         ls.push(this.options.indentEmpty ? indent : "");
       }
