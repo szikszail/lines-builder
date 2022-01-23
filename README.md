@@ -61,11 +61,13 @@ By default, **no indentation** is set.
 
 You can also set a **number** as the indentation, in this case, the given number of spaces will be used.
 
+#### 
+
 ### Trim
 
 By default, lines-builder **trims** the leading and trailing **whitespaces**, but you can turn it off:
 ```typescript
-const l = lines({ trim: false }, "Hello World  ", "  2nd line\n  3rd line");
+const l = lines({ trimLeft: false, trimRight: false }, "Hello World  ", "  2nd line\n  3rd line");
 console.log(l);
 // Hello World
 //   2nd line
@@ -84,6 +86,19 @@ console.log(parent);
 // --==2nd nested
 // --2nd parent
 ```
+
+By setting the `skipFirstLevelIndent` option, the lines-builder won't indent the direct lines of the lines-builder,
+only starting from the nested ones:
+```typescript
+const nested = lines(, "1st nested", "2nd nested");
+const parent = lines({ skipFirstLevelIndent: true, indent: '--' }, "1st parent", nested, "2nd parent");
+console.log(parent);
+// 1st parent
+// --1st nested
+// --2nd nested
+// 2nd parent
+```
+
 
 ### Default options
 
