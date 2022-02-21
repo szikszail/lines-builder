@@ -121,7 +121,7 @@ console.log(parent);
 ### Default options
 
 As seen above, options can be set per each lines-builder, but if you want to use one set of options, 
-per each lines-builder you will use, you can use the `setDefaultOptions`.
+per each lines-builder you will use, you can use the `setDefaultOptions` .
 
 ```typescript
 import { lines, setDefaultOptions } from "lines-builder";
@@ -137,7 +137,7 @@ console.log(parent);
 // __2nd parent
 ```
 
-Note that the default options can be reset to the [initial ones](src/index.ts#L20) with the `resetDefaultOptions`.
+Note that the default options can be reset to the [initial ones](src/index.ts#L20) with the `resetDefaultOptions` .
 
 ### EOL
 
@@ -150,6 +150,30 @@ const l = lines({ eol: "\025" }, "Hello", "World");
 console.log(l);
 // Hello\025World
 ```
+
+### Filtering
+
+The filter method can be used to filter in place - either to keep or remove lines matching a specific pattern.
+
+```typescript
+const l = lines("simple line", "# comment line", "other line");
+// the following expression removes lines starting with #
+l.filter(/^\s*#/, true);
+console.log(l);
+// simple line
+// other line
+```
+
+The filter function accepts either
+1. a `string`, what will be converted to a case-insensitive RegExp
+1. a `RegExp`, what will be used as it is
+1. a `type LineMatcher = (line: string, i: number) => boolean;` function, what should return `true` in case of a match.
+
+The filter function, based on the `reverse` parameter
+1. if `false`, it keeps the line if the matcher is `true`; otherwise, it removes it
+1. if `true`, it removes the line if the matcher is `true`; otherwise, it removes it
+
+In the case of nested lines-builder, the same matcher and parameter are applied, and the nested one is kept if it contains any line after the filter.
 
 ## Other
 

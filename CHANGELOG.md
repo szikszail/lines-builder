@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.3.0 - 2022-02-21
+
+### Added
+
+- Added `filter` function
+
 ## 1.2.0 - 2021-01-23
 
 ### Added

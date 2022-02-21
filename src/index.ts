@@ -15,6 +15,8 @@ export interface LinesBuilderOptions {
   eol?: string | null;
 }
 
+export type LineMather = (line: string, i: number) => boolean;
+
 
 export function splitToLines(s: string): string[] {
   return s.split(/\r?\n\r?/g);
@@ -36,6 +38,10 @@ export class LinesBuilder {
   };
   private options: LinesBuilderOptions;
   private lines: LineLike[] = [];
+
+  get length(): number {
+    return this.lines.length;
+  }
 
   constructor(...ls: LineLike[]);
   constructor(options: Partial<LinesBuilderOptions>, ...ls: LineLike[]);
@@ -159,6 +165,33 @@ export class LinesBuilder {
 
     log("prepend.#lines: %d", this.lines.length);
     return this;
+  }
+
+  public filter(matcher: string, reverse?: boolean): void;
+  public filter(matcher: RegExp, reverse?: boolean): void;
+  public filter(matcher: LineMather, reverse?: boolean): void;
+  public filter(matcher: string | RegExp | LineMather, reverse?: boolean): void {
+    log("filter(matcher: %o, reverse: %b)", matcher, reverse);
+    if (typeof matcher === "string") {
+      matcher = new RegExp(matcher, "i");
+    }
+    let matcherFn: LineMather;
+    if (matcher instanceof RegExp) {
+      matcherFn = (line: string, _: number): boolean => (matcher as RegExp).test(line);
+    } else {
+      matcherFn = matcher;
+    }
+    this.lines = this.lines.filter((line: LineLike, i: number): boolean => {
+      if (line instanceof LinesBuilder) {
+        log("filter.nested(original: %d)", line.length);
+        line.filter(matcherFn, reverse);
+        log("filter.nested(result: %d)", line.length);
+        return line.length > 0;
+      }
+      const result = matcherFn(line, i);
+      log("filter.string(result: %b)", result);
+      return !!result !== !!reverse;
+    });
   }
 }
 

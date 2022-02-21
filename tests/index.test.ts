@@ -136,4 +136,43 @@ describe("LinesBuilder", () => {
       testLines(parent, ["__1st parent", "____1st nested", "____2nd nested", "__2nd parent"]);
     });
   });
+
+  describe("filter", () => {
+    let l: LinesBuilder;
+
+    beforeEach(() => {
+      l = lines("simple", "# comment", "other # simple");
+    });
+
+    test("should handle string matcher", () => {
+      l.filter("Comment");
+      testLines(l, ["# comment"]);
+    });
+
+    test("should handle reverse string matcher", () => {
+      l.filter("comment", true);
+      testLines(l, ["simple", "other # simple"]);
+    });
+
+    test("should handle regexp matcher", () => {
+      l.filter(/^#/);
+      testLines(l, ["# comment"]);
+    });
+
+    test("should handle reverse regexp matcher", () => {
+      l.filter(/#/, true);
+      testLines(l, ["simple"]);
+    });
+
+    test("should handle function matcher", () => {
+      l.filter((line: string, _: number) => line.includes("#"), true);
+      testLines(l, ["simple"]);
+    });
+
+    test("should handle nested lines", () => {
+      const parent = lines({ indent: null }, "parent", l, lines("# only comment"), "end");
+      parent.filter(/#/, true);
+      testLines(parent, ["parent", "simple", "end"]);
+    });
+  });
 });
