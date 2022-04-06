@@ -23,7 +23,7 @@ console.log(l);
 
 | Option | Type | Description | Default |
 |:-------|:-----|:------------|:--------|
-| `indent` | `string|number` | The indentation to use to indent the lines (exact string or the number of spaces). | `null` (no indentation) |
+| `indent` | `string\|number` | The indentation to use to indent the lines (exact string or the number of spaces). | `null` (no indentation) |
 | `indentEmpty` | `boolean` | Whether the empty lines should still be indented. | `false` |
 | `skipFirstLevelIndent` | `boolean` | Whether only the nested lines-builders should be indented. | `false` |
 | `skipEmpty` | `boolean` | Whether empty lines should be added to the output string. | `false` |
