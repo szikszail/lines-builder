@@ -118,7 +118,7 @@ export class LinesBuilder {
 
     for (const line of this.lines) {
       log("toString.line: %o", line);
-      if (typeof line === "string") {
+      if (typeof line === "string" && line) {
         ls.push(`${firstIndent}${line}`);
       } else if (line instanceof LinesBuilder) {
         const nestedLines = splitToLines(line.toString());
