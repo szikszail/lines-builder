@@ -16,7 +16,7 @@ export interface LinesBuilderOptions {
 }
 
 export type LineMather = (line: string, i: number) => boolean;
-
+export type LineMapper = (line: string, i: number, level: number) => string;
 
 export function splitToLines(s: string): string[] {
   return s.split(/\r?\n\r?/g);
@@ -172,6 +172,9 @@ export class LinesBuilder {
   public filter(matcher: LineMather, reverse?: boolean): void;
   public filter(matcher: string | RegExp | LineMather, reverse?: boolean): void {
     log("filter(matcher: %o, reverse: %b)", matcher, reverse);
+    if (!matcher) {
+      throw new TypeError("Matcher must be set!");
+    }
     if (typeof matcher === "string") {
       matcher = new RegExp(matcher, "i");
     }
@@ -192,6 +195,29 @@ export class LinesBuilder {
       log("filter.string(result: %b)", result);
       return !!result !== !!reverse;
     });
+  }
+
+  protected internalMap(mapper: LineMapper, level: number): void {
+    log("internalMap(mapper: %o, level: %d)", mapper, level);
+    this.lines = this.lines.map((line: LineLike, i: number): LineLike => {
+      if (line instanceof LinesBuilder) {
+        log("internalMap.nested(original: %d)", line.length);
+        line.internalMap(mapper, level + 1);
+        return line;
+      }
+      return mapper(line, i, level);
+    })
+  }
+
+  public map(mapper: LineMapper): void {
+    log("map(mapper: %o)", mapper);
+    if (!mapper) {
+      throw new TypeError("Mapper must be set!");
+    }
+    if (typeof mapper !== "function") {
+      throw new TypeError("Mapper must be a function!");
+    }
+    this.internalMap(mapper, 0);
   }
 }
 

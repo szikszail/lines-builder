@@ -17,23 +17,23 @@ console.log(l);
 // This is the 2nd line
 ```
 
-`lines` accepts an optional `options` object and any additional string (or lines-builder) as lines.
+The `lines` accepts an optional `options` object and any additional string (or lines-builder) as lines.
 
 ### Options
 
-| Option | Type | Description | Default |
-|:-------|:-----|:------------|:--------|
-| `indent` | `string\|number` | The indentation to use to indent the lines (exact string or the number of spaces). | `null` (no indentation) |
-| `indentEmpty` | `boolean` | Whether the empty lines should still be indented. | `false` |
-| `skipFirstLevelIndent` | `boolean` | Whether only the nested lines-builders should be indented. | `false` |
-| `skipEmpty` | `boolean` | Whether empty lines should be added to the output string. | `false` |
-| `trimLeft` | `boolean` | Can trailing white spaces be trimmed from the parsed lines. | `true` |
-| `trimRight` | `boolean` | Can leading white spaces be trimmed from the parsed lines. | `true` |
-| `eol` | `string` | The line-break to be used. If not set, it is determined based on the platform. | `null` |
+| Option                 | Type             | Description                                                                        | Default                 |
+| :--------------------- | :--------------- | :--------------------------------------------------------------------------------- | :---------------------- |
+| `indent`               | `string\|number` | The indentation to use to indent the lines (exact string or the number of spaces). | `null` (no indentation) |
+| `indentEmpty`          | `boolean`        | Whether the empty lines should still be indented.                                  | `false`                 |
+| `skipFirstLevelIndent` | `boolean`        | Whether only the nested lines-builders should be indented.                         | `false`                 |
+| `skipEmpty`            | `boolean`        | Whether empty lines should be added to the output string.                          | `false`                 |
+| `trimLeft`             | `boolean`        | Can trailing white spaces be trimmed from the parsed lines.                        | `true`                  |
+| `trimRight`            | `boolean`        | Can leading white spaces be trimmed from the parsed lines.                         | `true`                  |
+| `eol`                  | `string`         | The line-break to be used. If not set, it is determined based on the platform.     | `null`                  |
 
 ### Append 
 
-You can **append any lines**, including new line to the end (in place), passing any string (or lines-builder) as arguments to `append` :
+You can **append any lines**, including a new line to the end (in place), passing any string (or lines-builder) as arguments to `append` :
 
 ```typescript
 l.append("3rd line", null, "4th line\nand 5th line");
@@ -121,7 +121,7 @@ console.log(parent);
 ### Default options
 
 As seen above, options can be set per each lines-builder, but if you want to use one set of options, 
-per each lines-builder you will use, you can use the `setDefaultOptions` .
+per each lines-builder you will use, you can use the `setDefaultOptions`.
 
 ```typescript
 import { lines, setDefaultOptions } from "lines-builder";
@@ -137,7 +137,7 @@ console.log(parent);
 // __2nd parent
 ```
 
-Note that the default options can be reset to the [initial ones](src/index.ts#L20) with the `resetDefaultOptions` .
+Note that the default options can be reset to the [initial ones](src/index.ts#L20) with the `resetDefaultOptions`.
 
 ### EOL
 
@@ -165,7 +165,7 @@ console.log(l);
 ```
 
 The filter function accepts either
-1. a `string`, what will be converted to a case-insensitive RegExp
+1. a `string`, which will be converted to a case-insensitive RegExp
 1. a `RegExp`, what will be used as it is
 1. a `type LineMatcher = (line: string, i: number) => boolean;` function, what should return `true` in case of a match.
 
@@ -174,6 +174,20 @@ The filter function, based on the `reverse` parameter
 1. if `true`, it removes the line if the matcher is `true`; otherwise, it removes it
 
 In the case of nested lines-builder, the same matcher and parameter are applied, and the nested one is kept if it contains any line after the filter.
+
+### Mapping
+
+The map method can be used to map the lines in place, updating all the lines with a function.
+
+```typescript
+const l = lines("line a", "line b", lines("nested line"));
+// the following add level/index to each line
+l.map((line: string, i: number, level: number) => `${level}/${i} - ${line}`);
+console.log(l);
+// 0/0 - line a
+// 0/1 - line b
+// 1/0 - nested line
+```
 
 ## Other
 

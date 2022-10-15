@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.4.0 - 2022-10-15
+
+### Added
+
+- Added `map` function
+
 ## 1.3.1 - 2022-04-06
 
 ### Fixed

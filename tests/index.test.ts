@@ -174,5 +174,35 @@ describe("LinesBuilder", () => {
       parent.filter(/#/, true);
       testLines(parent, ["parent", "simple", "end"]);
     });
+
+    test("should handle missing matcher", () => {
+      // @ts-ignore
+      expect(() => l.filter()).toThrow("Matcher must be set!");
+    })
+  });
+
+  describe("map", () => {
+    let l: LinesBuilder;
+
+    beforeEach(() => {
+      l = lines("simple", "# comment", "other # simple", lines("second level"));
+    });
+
+    test("should handle missing mapper", () => {
+      // @ts-ignore
+      expect(() => l.map()).toThrow("Mapper must be set!");
+    });
+
+    test("should handle non-function mapper", () => {
+      // @ts-ignore
+      expect(() => l.map("hello")).toThrow("Mapper must be a function!");
+    });
+
+    test("should map lines", () => {
+      l.map((line: string, i: number, level: number): string => {
+        return `[${level}][${i}][${line}]`;
+      });
+      testLines(l, ["[0][0][simple]", "[0][1][# comment]", "[0][2][other # simple]", "[1][0][second level]"]);
+    });
   });
 });
