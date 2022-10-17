@@ -137,6 +137,17 @@ describe("LinesBuilder", () => {
     });
   });
 
+  describe("copy", () => {
+    test("should copy lines builder", () => {
+      setDefaultOptions({ indent: "__" });
+      const nested = lines("1st nested", "2nd nested");
+      const parent = lines("1st parent", nested, "2nd parent");
+      const copied = parent.copy();
+      parent.map(() => 'updated');
+      testLines(copied, ["__1st parent", "____1st nested", "____2nd nested", "__2nd parent"]);
+    });
+  });
+
   describe("filter", () => {
     let l: LinesBuilder;
 
@@ -178,7 +189,14 @@ describe("LinesBuilder", () => {
     test("should handle missing matcher", () => {
       // @ts-ignore
       expect(() => l.filter()).toThrow("Matcher must be set!");
-    })
+    });
+
+    test("should filter a copy", () => {
+      const parent = lines({ indent: null }, "parent", l, lines("# only comment"), "end");
+      const filtered = parent.filter(/#/, true, false);
+      testLines(parent, ["parent", "simple", "# comment", "other # simple", "# only comment", "end"]);
+      testLines(filtered, ["parent", "simple", "end"]);
+    });
   });
 
   describe("map", () => {
@@ -204,5 +222,13 @@ describe("LinesBuilder", () => {
       });
       testLines(l, ["[0][0][simple]", "[0][1][# comment]", "[0][2][other # simple]", "[1][0][second level]"]);
     });
+
+    test("should map a copy", () => {
+      const mapped = l.map((line: string, i: number, level: number): string => {
+        return `[${level}][${i}][${line}]`;
+      }, false);
+      testLines(mapped, ["[0][0][simple]", "[0][1][# comment]", "[0][2][other # simple]", "[1][0][second level]"]);
+      testLines(l, ["simple", "# comment", "other # simple", "second level"]);
+    })
   });
 });

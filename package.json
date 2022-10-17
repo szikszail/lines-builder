@@ -1,6 +1,6 @@
 {
   "name": "lines-builder",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Tool and model to handle string lines and indentation.",
   "main": "index.js",
   "types": "index.d.ts",

@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.5.0 - 2022-10-07
+
+### Added
+
+- Added `copy` function
+- Added `inPlace` argument to `filter` and `map` with default value `true` to do the operation in place or on a copy
+
 ## 1.4.0 - 2022-10-15
 
 ### Added

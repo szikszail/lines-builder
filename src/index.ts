@@ -145,6 +145,20 @@ export class LinesBuilder {
     return ls.join(eol);
   }
 
+  public copy(): LinesBuilder {
+    log("copy:lines: %o", this.lines);
+    const copied = new LinesBuilder(this.options);
+    for (const line of this.lines) {
+      log("copy.line: %o", line);
+      if (line instanceof LinesBuilder) {
+        copied.append(line.copy());
+      } else {
+        copied.append(line);
+      }
+    }
+    return copied;
+  }
+
   public append(...ls: LineLike[]): LinesBuilder {
     log("append(ls: %o)", ls);
     log("append.#lines: %d", this.lines.length);
@@ -167,11 +181,11 @@ export class LinesBuilder {
     return this;
   }
 
-  public filter(matcher: string, reverse?: boolean): void;
-  public filter(matcher: RegExp, reverse?: boolean): void;
-  public filter(matcher: LineMather, reverse?: boolean): void;
-  public filter(matcher: string | RegExp | LineMather, reverse?: boolean): void {
-    log("filter(matcher: %o, reverse: %b)", matcher, reverse);
+  public filter(matcher: string, reverse?: boolean, inPlace?: boolean): LinesBuilder;
+  public filter(matcher: RegExp, reverse?: boolean, inPlace?: boolean): LinesBuilder;
+  public filter(matcher: LineMather, reverse?: boolean, inPlace?: boolean): LinesBuilder;
+  public filter(matcher: string | RegExp | LineMather, reverse = false, inPlace = true): LinesBuilder {
+    log("filter(matcher: %o, reverse: %b, inPlace: %b)", matcher, reverse, inPlace);
     if (!matcher) {
       throw new TypeError("Matcher must be set!");
     }
@@ -184,7 +198,8 @@ export class LinesBuilder {
     } else {
       matcherFn = matcher;
     }
-    this.lines = this.lines.filter((line: LineLike, i: number): boolean => {
+    const toFilter = inPlace ? this : this.copy();
+    toFilter.lines = toFilter.lines.filter((line: LineLike, i: number): boolean => {
       if (line instanceof LinesBuilder) {
         log("filter.nested(original: %d)", line.length);
         line.filter(matcherFn, reverse);
@@ -195,6 +210,7 @@ export class LinesBuilder {
       log("filter.string(result: %b)", result);
       return !!result !== !!reverse;
     });
+    return toFilter;
   }
 
   protected internalMap(mapper: LineMapper, level: number): void {
@@ -209,15 +225,17 @@ export class LinesBuilder {
     })
   }
 
-  public map(mapper: LineMapper): void {
-    log("map(mapper: %o)", mapper);
+  public map(mapper: LineMapper, inPlace = true): LinesBuilder {
+    log("map(mapper: %o, inPlace: %b)", mapper, inPlace);
     if (!mapper) {
       throw new TypeError("Mapper must be set!");
     }
     if (typeof mapper !== "function") {
       throw new TypeError("Mapper must be a function!");
     }
-    this.internalMap(mapper, 0);
+    const toMap = inPlace ? this : this.copy();
+    toMap.internalMap(mapper, 0);
+    return toMap;
   }
 }
 

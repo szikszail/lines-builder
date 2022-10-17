@@ -164,6 +164,23 @@ console.log(l);
 // other line
 ```
 
+If filtering needs to be done on a copy of the lines-builder, without touching the original one, the 3rd argument must be set to `false`:
+
+```typescript
+const l = lines("simple line", "# comment line", "other line");
+// the following expression removes lines starting with # and returns the result
+const filtered = l.filter(/^\s*#/, true, false);
+
+console.log(filtered);
+// simple line
+// other line
+
+console.log(l);
+// simple line
+// # comment line
+// other line
+```
+
 The filter function accepts either
 1. a `string`, which will be converted to a case-insensitive RegExp
 1. a `RegExp`, what will be used as it is
@@ -187,6 +204,42 @@ console.log(l);
 // 0/0 - line a
 // 0/1 - line b
 // 1/0 - nested line
+```
+If mapping needs to be done on a copy of the lines-builder, without touching the original one, the 2nd argument must be set to `false`:
+
+```typescript
+const l = lines("line a", "line b", lines("nested line"));
+// the following add level/index to each line
+const mapped = l.map((line: string, i: number, level: number) => `${level}/${i} - ${line}`, false);
+
+console.log(mapped);
+// 0/0 - line a
+// 0/1 - line b
+// 1/0 - nested line
+
+console.log(l);
+// line a
+// line b
+// nested line
+```
+
+### Copy
+
+The copy method can be used to clone the lines-builder (including the nested lines, with the same options):
+
+```typescript
+const l = lines("line a", "line b", lines("nested line"));
+const copied = l.copy();
+
+console.log(copied);
+// line a
+// line b
+// nested line
+
+console.log(l);
+// line a
+// line b
+// nested line
 ```
 
 ## Other
