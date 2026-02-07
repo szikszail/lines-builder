@@ -1,4 +1,12 @@
-import { lines, splitToLines, LineLike, LinesBuilder, LinesBuilderOptions, setDefaultOptions, resetDefaultOptions } from "../src";
+import {
+  lines,
+  splitToLines,
+  LineLike,
+  LinesBuilder,
+  LinesBuilderOptions,
+  setDefaultOptions,
+  resetDefaultOptions,
+} from "../src";
 import * as os from "os";
 
 jest.mock("os");
@@ -19,91 +27,225 @@ describe("LinesBuilder", () => {
     };
   }
 
-  function testLinesWithOptions(expected: string[], options: Partial<LinesBuilderOptions>, ...ls: LineLike[]) {
+  function testLinesWithOptions(
+    expected: string[],
+    options: Partial<LinesBuilderOptions>,
+    ...ls: LineLike[]
+  ) {
     return function () {
       testLines(lines(options, ...ls), expected);
     };
   }
 
-
   describe("constructor", () => {
-    test("should handle single string parameter", testLinesWithoutOptions(["Hello World"], "Hello World"));
+    test(
+      "should handle single string parameter",
+      testLinesWithoutOptions(["Hello World"], "Hello World"),
+    );
 
-    test("should handle single string with multiline", testLinesWithoutOptions(["Hello", "World", "Again", "And", "Again"], "Hello\nWorld", "Again\r\nAnd\n\rAgain"));
+    test(
+      "should handle single string with multiline",
+      testLinesWithoutOptions(
+        ["Hello", "World", "Again", "And", "Again"],
+        "Hello\nWorld",
+        "Again\r\nAnd\n\rAgain",
+      ),
+    );
 
-    test("should trim lines by default", testLinesWithoutOptions(["Hello", "World"], " Hello \n World\t"));
+    test(
+      "should trim lines by default",
+      testLinesWithoutOptions(["Hello", "World"], " Hello \n World\t"),
+    );
 
-    test("should not trim lines if ommited", testLinesWithOptions([" Hello ", " World\t"], { trimLeft: false, trimRight: false }, " Hello \n World\t"));
+    test(
+      "should not trim lines if ommited",
+      testLinesWithOptions(
+        [" Hello ", " World\t"],
+        { trimLeft: false, trimRight: false },
+        " Hello \n World\t",
+      ),
+    );
 
-    test("should handle multiple parameters", testLinesWithoutOptions(["Hello", "World", "Again"], "Hello\nWorld", "Again"));
+    test(
+      "should handle multiple parameters",
+      testLinesWithoutOptions(
+        ["Hello", "World", "Again"],
+        "Hello\nWorld",
+        "Again",
+      ),
+    );
 
-    test("should handle empty line", testLinesWithoutOptions(["Hello", "", "World"], "Hello", null, "World"));
+    test(
+      "should handle empty line",
+      testLinesWithoutOptions(["Hello", "", "World"], "Hello", null, "World"),
+    );
 
-    test("should skip empty line", testLinesWithOptions(["Hello", "World"], { skipEmpty: true }, "Hello", null, "World"));
+    test(
+      "should skip empty line",
+      testLinesWithOptions(
+        ["Hello", "World"],
+        { skipEmpty: true },
+        "Hello",
+        null,
+        "World",
+      ),
+    );
 
     test("should handle empty arguments", testLinesWithoutOptions([""]));
 
-    // @ts-ignore
-    test("should ignore arguments with incorrect type", testLinesWithoutOptions([""], 1, undefined, {}, false))
+    test(
+      "should ignore arguments with incorrect type",
+      // @ts-expect-error Invalid arguments for testing
+      testLinesWithoutOptions([""], 1, undefined, {}, false),
+    );
   });
 
   describe("append", () => {
     test("should add lines to the end", () => {
       const l = lines("1st").append("2nd", null, "3rd\n4th");
-      expect(splitToLines(l.toString())).toEqual(["1st", "2nd", "", "3rd", "4th"]);
+      expect(splitToLines(l.toString())).toEqual([
+        "1st",
+        "2nd",
+        "",
+        "3rd",
+        "4th",
+      ]);
     });
   });
 
   describe("prepend", () => {
     test("should add lines to the beginning", () => {
       const l = lines("4th").prepend("1st", null, "2nd\n3rd");
-      expect(splitToLines(l.toString())).toEqual(["1st", "", "2nd", "3rd", "4th"]);
+      expect(splitToLines(l.toString())).toEqual([
+        "1st",
+        "",
+        "2nd",
+        "3rd",
+        "4th",
+      ]);
     });
   });
 
   describe("indent", () => {
-    test("should not have indent by default", testLinesWithoutOptions(["1st", "2nd"], "1st", "2nd"));
+    test(
+      "should not have indent by default",
+      testLinesWithoutOptions(["1st", "2nd"], "1st", "2nd"),
+    );
 
-    test("should add string indent", testLinesWithOptions(["--1st", "--2nd"], { indent: "--" }, "1st", "2nd"));
+    test(
+      "should add string indent",
+      testLinesWithOptions(["--1st", "--2nd"], { indent: "--" }, "1st", "2nd"),
+    );
 
-    test("should add number of space as indent", testLinesWithOptions(["  1st", "  2nd"], { indent: 2 }, "1st", "2nd"));
+    test(
+      "should add number of space as indent",
+      testLinesWithOptions(["  1st", "  2nd"], { indent: 2 }, "1st", "2nd"),
+    );
 
-    test("should handle incorrect number of space as indent", testLinesWithOptions(["1st", "2nd"], { indent: -8 }, "1st", "2nd"));
+    test(
+      "should handle incorrect number of space as indent",
+      testLinesWithOptions(["1st", "2nd"], { indent: -8 }, "1st", "2nd"),
+    );
 
-    test("should not indent empty lines by default", testLinesWithOptions(["--1st", "", "--2nd"], { indent: "--" }, "1st", null, "2nd"));
+    test(
+      "should not indent empty lines by default",
+      testLinesWithOptions(
+        ["--1st", "", "--2nd"],
+        { indent: "--" },
+        "1st",
+        null,
+        "2nd",
+      ),
+    );
 
-    test("should indent empty lines if set", testLinesWithOptions(["--1st", "--", "--2nd", "--3rd", "--", "--4th"], { indent: "--", indentEmpty: true }, "1st", null, "2nd", "3rd\n\n4th"));
+    test(
+      "should indent empty lines if set",
+      testLinesWithOptions(
+        ["--1st", "--", "--2nd", "--3rd", "--", "--4th"],
+        { indent: "--", indentEmpty: true },
+        "1st",
+        null,
+        "2nd",
+        "3rd\n\n4th",
+      ),
+    );
   });
 
   describe("nested", () => {
     test("should handle nested lines-builder", () => {
       const nested = lines("1st nested", "2nd nested");
       const parent = lines("1st parent", nested, "2nd parent");
-      testLines(parent, ["1st parent", "1st nested", "2nd nested", "2nd parent"]);
+      testLines(parent, [
+        "1st parent",
+        "1st nested",
+        "2nd nested",
+        "2nd parent",
+      ]);
     });
 
     test("should indent nested lines-builder", () => {
       const nested = lines({ indent: "==" }, "1st nested", "2nd nested");
-      const parent = lines({ indent: "--" }, "1st parent", nested, "2nd parent");
-      testLines(parent, ["--1st parent", "--==1st nested", "--==2nd nested", "--2nd parent"]);
+      const parent = lines(
+        { indent: "--" },
+        "1st parent",
+        nested,
+        "2nd parent",
+      );
+      testLines(parent, [
+        "--1st parent",
+        "--==1st nested",
+        "--==2nd nested",
+        "--2nd parent",
+      ]);
     });
 
     test("should skip first level indent", () => {
       const nested = lines("1st nested", "2nd nested");
-      const parent = lines({ indent: "--", skipFirstLevelIndent: true }, "1st parent", nested, "2nd parent");
-      testLines(parent, ["1st parent", "--1st nested", "--2nd nested", "2nd parent"]);
+      const parent = lines(
+        { indent: "--", skipFirstLevelIndent: true },
+        "1st parent",
+        nested,
+        "2nd parent",
+      );
+      testLines(parent, [
+        "1st parent",
+        "--1st nested",
+        "--2nd nested",
+        "2nd parent",
+      ]);
     });
 
     test("should handle nested empty lines", () => {
       const nested = lines("1st nested", null, "2nd nested");
-      const parent = lines({ indent: "--", indentEmpty: false }, "1st parent", nested, "2nd parent");
-      testLines(parent, ["--1st parent", "--1st nested", "", "--2nd nested", "--2nd parent"]);
+      const parent = lines(
+        { indent: "--", indentEmpty: false },
+        "1st parent",
+        nested,
+        "2nd parent",
+      );
+      testLines(parent, [
+        "--1st parent",
+        "--1st nested",
+        "",
+        "--2nd nested",
+        "--2nd parent",
+      ]);
     });
 
     test("should skip nested empty lines if set", () => {
       const nested = lines("1st nested", null, "2nd nested");
-      const parent = lines({ indent: "--", skipEmpty: true }, "1st parent", nested, "2nd parent");
-      testLines(parent, ["--1st parent", "--1st nested", "--2nd nested", "--2nd parent"]);
+      const parent = lines(
+        { indent: "--", skipEmpty: true },
+        "1st parent",
+        nested,
+        "2nd parent",
+      );
+      testLines(parent, [
+        "--1st parent",
+        "--1st nested",
+        "--2nd nested",
+        "--2nd parent",
+      ]);
     });
   });
 
@@ -133,7 +275,12 @@ describe("LinesBuilder", () => {
       setDefaultOptions({ indent: "__" });
       const nested = lines("1st nested", "2nd nested");
       const parent = lines("1st parent", nested, "2nd parent");
-      testLines(parent, ["__1st parent", "____1st nested", "____2nd nested", "__2nd parent"]);
+      testLines(parent, [
+        "__1st parent",
+        "____1st nested",
+        "____2nd nested",
+        "__2nd parent",
+      ]);
     });
   });
 
@@ -143,8 +290,13 @@ describe("LinesBuilder", () => {
       const nested = lines("1st nested", "2nd nested");
       const parent = lines("1st parent", nested, "2nd parent");
       const copied = parent.copy();
-      parent.map(() => 'updated');
-      testLines(copied, ["__1st parent", "____1st nested", "____2nd nested", "__2nd parent"]);
+      parent.map(() => "updated");
+      testLines(copied, [
+        "__1st parent",
+        "____1st nested",
+        "____2nd nested",
+        "__2nd parent",
+      ]);
     });
   });
 
@@ -181,20 +333,39 @@ describe("LinesBuilder", () => {
     });
 
     test("should handle nested lines", () => {
-      const parent = lines({ indent: null }, "parent", l, lines("# only comment"), "end");
+      const parent = lines(
+        { indent: null },
+        "parent",
+        l,
+        lines("# only comment"),
+        "end",
+      );
       parent.filter(/#/, true);
       testLines(parent, ["parent", "simple", "end"]);
     });
 
     test("should handle missing matcher", () => {
-      // @ts-ignore
+      // @ts-expect-error Invalid arguments for testing
       expect(() => l.filter()).toThrow("Matcher must be set!");
     });
 
     test("should filter a copy", () => {
-      const parent = lines({ indent: null }, "parent", l, lines("# only comment"), "end");
+      const parent = lines(
+        { indent: null },
+        "parent",
+        l,
+        lines("# only comment"),
+        "end",
+      );
       const filtered = parent.filter(/#/, true, false);
-      testLines(parent, ["parent", "simple", "# comment", "other # simple", "# only comment", "end"]);
+      testLines(parent, [
+        "parent",
+        "simple",
+        "# comment",
+        "other # simple",
+        "# only comment",
+        "end",
+      ]);
       testLines(filtered, ["parent", "simple", "end"]);
     });
   });
@@ -207,12 +378,12 @@ describe("LinesBuilder", () => {
     });
 
     test("should handle missing mapper", () => {
-      // @ts-ignore
+      // @ts-expect-error Invalid arguments for testing
       expect(() => l.map()).toThrow("Mapper must be set!");
     });
 
     test("should handle non-function mapper", () => {
-      // @ts-ignore
+      // @ts-expect-error Invalid arguments for testing
       expect(() => l.map("hello")).toThrow("Mapper must be a function!");
     });
 
@@ -220,15 +391,25 @@ describe("LinesBuilder", () => {
       l.map((line: string, i: number, level: number): string => {
         return `[${level}][${i}][${line}]`;
       });
-      testLines(l, ["[0][0][simple]", "[0][1][# comment]", "[0][2][other # simple]", "[1][0][second level]"]);
+      testLines(l, [
+        "[0][0][simple]",
+        "[0][1][# comment]",
+        "[0][2][other # simple]",
+        "[1][0][second level]",
+      ]);
     });
 
     test("should map a copy", () => {
       const mapped = l.map((line: string, i: number, level: number): string => {
         return `[${level}][${i}][${line}]`;
       }, false);
-      testLines(mapped, ["[0][0][simple]", "[0][1][# comment]", "[0][2][other # simple]", "[1][0][second level]"]);
+      testLines(mapped, [
+        "[0][0][simple]",
+        "[0][1][# comment]",
+        "[0][2][other # simple]",
+        "[1][0][second level]",
+      ]);
       testLines(l, ["simple", "# comment", "other # simple", "second level"]);
-    })
+    });
   });
 });

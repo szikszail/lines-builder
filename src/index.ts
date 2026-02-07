@@ -1,4 +1,5 @@
-import * as os from "os";
+import * as os from "node:os";
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 import debug = require("debug");
 
 const log = debug("lines-builder");
@@ -45,10 +46,15 @@ export class LinesBuilder {
 
   constructor(...ls: LineLike[]);
   constructor(options: Partial<LinesBuilderOptions>, ...ls: LineLike[]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   constructor(...args: any[]) {
     log("LinesBuilder(args: %o)", args);
     let options: Partial<LinesBuilderOptions>;
-    if (args[0] && typeof args[0] === "object" && !(args[0] instanceof LinesBuilder)) {
+    if (
+      args[0] &&
+      typeof args[0] === "object" &&
+      !(args[0] instanceof LinesBuilder)
+    ) {
       options = args.shift();
     }
     this.options = {
@@ -73,7 +79,9 @@ export class LinesBuilder {
     return LinesBuilder.DEFAULT_OPTIONS;
   }
 
-  public static setDefaultOptions(options: Partial<LinesBuilderOptions>): LinesBuilderOptions {
+  public static setDefaultOptions(
+    options: Partial<LinesBuilderOptions>,
+  ): LinesBuilderOptions {
     log("setDefaultOptions(options: %o)", options);
     if (typeof options !== "object" || !options) {
       throw new TypeError("Options must be a LinesBuilderOptions!");
@@ -91,14 +99,14 @@ export class LinesBuilder {
     log("parseLines(ls: %o)", ls);
     const parsedLines: LineLike[] = [];
     for (const line of ls) {
-      log("parseLines.line: %o", line)
+      log("parseLines.line: %o", line);
       if (typeof line === "string") {
         let splitedLines: string[] = splitToLines(line);
         if (this.options.trimLeft) {
-          splitedLines = splitedLines.map(l => l.trimLeft());
+          splitedLines = splitedLines.map((l) => l.trimLeft());
         }
         if (this.options.trimRight) {
-          splitedLines = splitedLines.map(l => l.trimRight());
+          splitedLines = splitedLines.map((l) => l.trimRight());
         }
         parsedLines.push(...splitedLines);
       } else if (line instanceof LinesBuilder || line === null) {
@@ -112,7 +120,7 @@ export class LinesBuilder {
   public toString(): string {
     log("toString:lines: %o", this.lines);
     const ls: string[] = [];
-    const indent: string = this.options.indent as string ?? "";
+    const indent: string = (this.options.indent as string) ?? "";
     const firstIndent: string = this.options.skipFirstLevelIndent ? "" : indent;
     log("toString.indent: %o", indent);
 
@@ -181,11 +189,32 @@ export class LinesBuilder {
     return this;
   }
 
-  public filter(matcher: string, reverse?: boolean, inPlace?: boolean): LinesBuilder;
-  public filter(matcher: RegExp, reverse?: boolean, inPlace?: boolean): LinesBuilder;
-  public filter(matcher: LineMather, reverse?: boolean, inPlace?: boolean): LinesBuilder;
-  public filter(matcher: string | RegExp | LineMather, reverse = false, inPlace = true): LinesBuilder {
-    log("filter(matcher: %o, reverse: %b, inPlace: %b)", matcher, reverse, inPlace);
+  public filter(
+    matcher: string,
+    reverse?: boolean,
+    inPlace?: boolean,
+  ): LinesBuilder;
+  public filter(
+    matcher: RegExp,
+    reverse?: boolean,
+    inPlace?: boolean,
+  ): LinesBuilder;
+  public filter(
+    matcher: LineMather,
+    reverse?: boolean,
+    inPlace?: boolean,
+  ): LinesBuilder;
+  public filter(
+    matcher: string | RegExp | LineMather,
+    reverse = false,
+    inPlace = true,
+  ): LinesBuilder {
+    log(
+      "filter(matcher: %o, reverse: %b, inPlace: %b)",
+      matcher,
+      reverse,
+      inPlace,
+    );
     if (!matcher) {
       throw new TypeError("Matcher must be set!");
     }
@@ -194,22 +223,25 @@ export class LinesBuilder {
     }
     let matcherFn: LineMather;
     if (matcher instanceof RegExp) {
-      matcherFn = (line: string, _: number): boolean => (matcher as RegExp).test(line);
+      matcherFn = (line: string, _: number): boolean =>
+        (matcher as RegExp).test(line);
     } else {
       matcherFn = matcher;
     }
     const toFilter = inPlace ? this : this.copy();
-    toFilter.lines = toFilter.lines.filter((line: LineLike, i: number): boolean => {
-      if (line instanceof LinesBuilder) {
-        log("filter.nested(original: %d)", line.length);
-        line.filter(matcherFn, reverse);
-        log("filter.nested(result: %d)", line.length);
-        return line.length > 0;
-      }
-      const result = matcherFn(line, i);
-      log("filter.string(result: %b)", result);
-      return !!result !== !!reverse;
-    });
+    toFilter.lines = toFilter.lines.filter(
+      (line: LineLike, i: number): boolean => {
+        if (line instanceof LinesBuilder) {
+          log("filter.nested(original: %d)", line.length);
+          line.filter(matcherFn, reverse);
+          log("filter.nested(result: %d)", line.length);
+          return line.length > 0;
+        }
+        const result = matcherFn(line, i);
+        log("filter.string(result: %b)", result);
+        return !!result !== !!reverse;
+      },
+    );
     return toFilter;
   }
 
@@ -222,7 +254,7 @@ export class LinesBuilder {
         return line;
       }
       return mapper(line, i, level);
-    })
+    });
   }
 
   public map(mapper: LineMapper, inPlace = true): LinesBuilder {
@@ -243,7 +275,11 @@ export const setDefaultOptions = LinesBuilder.setDefaultOptions;
 export const resetDefaultOptions = LinesBuilder.resetDefaultOptions;
 
 export function lines(...ls: LineLike[]): LinesBuilder;
-export function lines(options: Partial<LinesBuilderOptions>, ...ls: LineLike[]): LinesBuilder;
+export function lines(
+  options: Partial<LinesBuilderOptions>,
+  ...ls: LineLike[]
+): LinesBuilder;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function lines(...args: any[]): LinesBuilder {
   return new LinesBuilder(...args);
 }

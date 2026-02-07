@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.6.0
+
+### Changed
+
+Dependency updates
+
 ## 1.5.0 - 2022-10-07
 
 ### Added
